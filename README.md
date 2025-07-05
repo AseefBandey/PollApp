@@ -10,10 +10,10 @@ Django poll app is a full featured polling app. You Dont have to register in thi
 
 <h2>Installing</h2>
 <pre>open terminal and type</pre>
-<code>git clone https://github.com/devmahmud/Django-poll-app.git</code><br><br>
+<code>git clone [https://github.com/AseefBandey/PollApp.git</code><br><br>
 
 <h4>or simply download using the url below</h4>
-<code>https://github.com/devmahmud/Django-poll-app.git</code><br>
+<code>https://github.com/AseefBandey/PollApp.git</code><br>
 
 <h2>To migrate the database open terminal in project directory and type</h2>
 <code>python manage.py makemigrations</code><br>
@@ -22,12 +22,6 @@ Django poll app is a full featured polling app. You Dont have to register in thi
 <h2>To use admin panel you need to create superuser using this command </h2>
 <code>python manage.py createsuperuser</code>
 
-<h2>To Create some dummy text data for your app follow the step below:</h2>
-<code>pip install faker</code>
-<code>python manage.py shell</code>
-<code>import seeder</code>
-<code>seeder.seed_all(30)</code>
-<p>Here 30 is a number of entry. You can use it as your own</p>
 
 <h2> To run the program in local server use the following command </h2>
 <code>python manage.py runserver</code>
