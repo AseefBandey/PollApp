@@ -1,6 +1,8 @@
 # Django-Poll-App
 
-Django poll app is a full featured polling app. You Dont have to register in this app to show the polls and to vote. If you already voted you can not vote again. Only the owner of a poll can add poll , edit poll, update poll, delete poll , add choice, update choice, delete choice and end a poll. If a poll is ended it can not be voted. Ended poll only shows user the final result of the poll. There is a search option for polls.
+Developed a  full-stack Django poll application during my internship at TrialX, focusing on real-time user interaction. The platform allows users to create polls, vote, and view dynamic results with percentage bars. 
+🌐 Company: <a href="https://www.trialx.com/">TrialX</a>
+🔗 LinkedIn: <a href=" https://www.linkedin.com/company/trialx">TrialX LinkedIn</a>
 
 ## App Screenshot
 [![Poll App Screenshot](https://i.postimg.cc/dV04YRS9/ss.png)](https://postimg.cc/mt0Q394c)
