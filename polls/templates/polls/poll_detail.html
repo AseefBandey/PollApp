@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-dark-card rounded-2xl shadow-xl p-8 border border-gray-800">
+    {% if messages %}
+            <div class="space-y-2 mb-6">
+            {% for message in messages %}
+                    <div class="px-4 py-3 rounded-lg text-sm animate-fade-in
+                    {% if message.tags == 'error' %}
+                            bg-red-900/50 text-red-200 border border-red-800
+                    {% elif message.tags == 'success' %}
+                            bg-green-900/50 text-green-200 border border-green-800
+                    {% else %}
+                            bg-blue-900/50 text-blue-200 border border-blue-800
+                    {% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-100">{{ poll.text }}</h2>
+            {% if poll.active %}
+                <p class="text-gray-400 mt-2">Select one option and click Vote</p>
+            {% else %}
+                <p class="text-red-400 mt-2">This poll has ended</p>
+            {% endif %}
+        </div>
+
+        {% if poll.active %}
+        <form method="POST" action="{% url 'polls:vote' poll.id %}" class="space-y-4" id="voteForm">
+        {% csrf_token %}
+            <div class="space-y-3">
+        {% for choice in poll.choice_set.all %}
+                    <label class="flex items-center p-4 bg-gray-900 rounded-lg border border-gray-700 cursor-pointer hover:border-primary transition-all group">
+                        <input type="radio" name="choice" value="{{ choice.id }}" required
+                               class="form-radio h-4 w-4 text-primary border-gray-700 bg-gray-800 focus:ring-primary focus:ring-offset-gray-900">
+                        <span class="ml-3 text-gray-300 group-hover:text-gray-100">{{ choice.choice_text }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="flex items-center justify-between mt-8">
+            <button type="submit"
+                        class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center">
+                    <i class="fas fa-vote-yea mr-2"></i>
+                Vote
+            </button>
+            <a href="{% url 'polls:list' %}"
+                   class="px-6 py-3 border border-gray-700 text-gray-300 hover:bg-gray-900 rounded-lg transition-all duration-200">
+                Cancel
+            </a>
+        </div>
+    </form>
+        {% else %}
+            <div class="flex justify-center">
+                <a href="{% url 'polls:results' poll.id %}"
+                   class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    View Results
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.getElementById('voteForm').addEventListener('submit', function(e) {
+    const choices = document.querySelectorAll('input[name="choice"]');
+    let selected = false;
+    
+    choices.forEach(choice => {
+        if (choice.checked) {
+            selected = true;
+        }
+    });
+    
+    if (!selected) {
+        e.preventDefault();
+        alert('Please select an option before voting.');
+    }
+});
+</script>
+
+<style>
+/* Custom radio button styling */
+.form-radio {
+    @apply rounded-full;
+}
+.form-radio:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+}
+.form-radio:checked:hover, .form-radio:checked:focus {
+    @apply border-transparent;
+}
+</style>
+{% endblock %}

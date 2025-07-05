@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poll Me | Modern Polling Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#6366f1',
+                        'primary-dark': '#4f46e5',
+                        'secondary': '#f59e0b',
+                        'accent': '#10b981',
+                        'dark-bg': '#111827',
+                        'dark-card': '#1f2937',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .glass-effect {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #818cf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+    {% block custom_css %}{% endblock custom_css %}
+</head>
+<body class="dark bg-dark-bg text-gray-100 min-h-screen flex flex-col font-poppins">
+
+    {% include 'includes/navbar.html' %}
+
+    <main class="flex-1 max-w-4xl mx-auto p-6 w-full animate-fade-in">
+        {% block content %}{% endblock content %}
+    </main>
+
+    <footer class="glass-effect py-4 mt-8">
+        <div class="max-w-4xl mx-auto px-6 text-center text-sm text-gray-400">
+            <p>© 2023 Poll Me. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
