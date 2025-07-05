@@ -2,7 +2,7 @@
 
 Developed a  full-stack Django poll application during my internship at TrialX, focusing on real-time user interaction. The platform allows users to create polls, vote, and view dynamic results with percentage bars. <br>
 🌐 Company: <a href="https://www.trialx.com/">TrialX</a> <br>
-🔗 LinkedIn: <a href=" https://www.linkedin.com/company/trialx">TrialX LinkedIn</a>
+🔗 LinkedIn: <a href="https://www.linkedin.com/company/trialx">TrialX LinkedIn</a>
 
 ## App Screenshot
 [![Poll App Screenshot](https://i.postimg.cc/dV04YRS9/ss.png)](https://postimg.cc/mt0Q394c)
