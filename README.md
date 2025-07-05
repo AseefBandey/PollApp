@@ -34,11 +34,6 @@ Django poll app is a full featured polling app. You Dont have to register in thi
 
 <h3>Poll Add Page</h3>
 <div align="center">
-    <img src="https://user-images.githubusercontent.com/19981097/51409796-fe759180-1b8c-11e9-941b-c1202956cca4.png" width="100%"</img> 
-</div>
-
-<h3>Polling page</h3>
-<div align="center">
     <img src="https://i.postimg.cc/28gDtxwP/Capture.png"width="100%"</img> 
 </div>
 
