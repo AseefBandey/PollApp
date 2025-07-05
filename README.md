@@ -10,7 +10,7 @@ Django poll app is a full featured polling app. You Dont have to register in thi
 
 <h2>Installing</h2>
 <pre>open terminal and type</pre>
-<code>git clone [https://github.com/AseefBandey/PollApp.git</code><br><br>
+<code>git clone https://github.com/AseefBandey/PollApp.git</code><br><br>
 
 <h4>or simply download using the url below</h4>
 <code>https://github.com/AseefBandey/PollApp.git</code><br>
