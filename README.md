@@ -15,7 +15,7 @@ Developed a  full-stack Django poll application during my internship at TrialX, 
 <code>python== 3.5 or up and django==2.0 or up</code>
 
 <h2>Installing</h2>
-<pre>open terminal and type</pre>
+<p>open terminal and type</p>
 <code>git clone https://github.com/AseefBandey/PollApp.git</code><br><br>
 
 
