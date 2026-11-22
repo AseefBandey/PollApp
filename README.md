@@ -143,18 +143,5 @@ OK
 Destroying test database for alias 'default'...
 ```
 
----
-
-## 💼 How to Feature This Project on Your Resume
-
-Copy and adapt these high-impact bullet points for your software engineering resume:
-
-> - **Architected a production-grade polling & analytics platform** using **Django 5, Django REST Framework, and PostgreSQL/SQLite**, featuring atomic transactions (`F()` expressions) to eliminate race conditions under concurrent voting spikes.
-> - **Engineered an anti-fraud voting verification layer** combining user authentication constraints, encrypted session tracking, and IP extraction, reducing duplicate ballots to 0%.
-> - **Built a decoupled RESTful API with OpenAPI/Swagger 3.0 documentation** (`drf-spectacular`), enabling real-time vote aggregation and programmatic poll creation.
-> - **Containerized the application using Docker and configured GitHub Actions CI/CD**, achieving 100% automated test coverage across models, authorization gates, and API endpoints.
-
----
-
 ## 📄 License
 This project is open-source under the [MIT License](LICENSE).
