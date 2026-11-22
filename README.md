@@ -1,4 +1,4 @@
-# PollMe &mdash; Enterprise Real-Time Polling & Analytics Platform
+# PollMe &mdash;  Real-Time Polling & Analytics Platform
 
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.14-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.0+-092e20?logo=django&logoColor=white)](https://www.djangoproject.com/)
