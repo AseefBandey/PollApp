@@ -1,39 +1,141 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}PollMe | Real-Time Polling & Live Analytics Engine{% endblock title %}
+
 {% block content %}
-<div class="min-h-[80vh] flex flex-col items-center justify-center px-4 animate-slide-up">
-    <div class="text-center space-y-8 max-w-2xl">
-        <h1 class="text-5xl font-bold gradient-text mb-4">Welcome to PollMe</h1>
-        <p class="text-xl text-gray-300 mb-8">Create and participate in polls with our modern polling platform. Make your voice heard!</p>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            <div class="p-6 bg-dark-card rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-800">
-                <i class="fas fa-poll text-4xl text-primary mb-4"></i>
-                <h3 class="text-lg font-semibold mb-2 text-gray-100">Create Polls</h3>
-                <p class="text-gray-400">Create custom polls with multiple options</p>
-            </div>
-            <div class="p-6 bg-dark-card rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-800">
-                <i class="fas fa-chart-bar text-4xl text-accent mb-4"></i>
-                <h3 class="text-lg font-semibold mb-2 text-gray-100">Real-time Results</h3>
-                <p class="text-gray-400">View results as they come in</p>
-            </div>
+<div class="py-8 sm:py-14 animate-slide-up">
+    <!-- Hero Header -->
+    <div class="text-center max-w-3xl mx-auto space-y-6">
+        <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary-light text-xs font-semibold tracking-wide uppercase">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Real-Time Polling & Verified Voting Engine</span>
         </div>
-        
-        <div class="flex justify-center">
+
+        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            Instant Polls. <br>
+            <span class="gradient-text">Live Actionable Insights.</span>
+        </h1>
+
+        <p class="text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto">
+            Create interactive polls, cast verified votes, and visualize dynamic results in real-time with anti-duplicate fraud protection and a high-performance RESTful API.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
             <a href="{% url 'polls:add' %}"
-               class="px-8 py-4 bg-primary text-white rounded-lg hover:bg-primary-dark transform hover:-translate-y-1 transition-all duration-200 shadow-lg hover:shadow-xl">
-                <i class="fas fa-plus-circle mr-2"></i>Create Poll
+               class="px-7 py-3.5 bg-primary hover:bg-primary-dark text-white rounded-xl font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2">
+                <i class="fas fa-plus-circle"></i>
+                <span>Create a Poll</span>
             </a>
+            <a href="{% url 'polls:list' %}"
+               class="px-7 py-3.5 bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 border border-slate-700 rounded-xl font-semibold transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2">
+                <i class="fas fa-poll"></i>
+                <span>Explore Live Polls</span>
+            </a>
+            <a href="{% url 'swagger-ui' %}"
+               class="px-5 py-3.5 text-slate-400 hover:text-white rounded-xl font-medium transition-colors flex items-center space-x-2">
+                <i class="fas fa-code text-primary-light"></i>
+                <span>OpenAPI Docs</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Live Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-16">
+        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:border-primary/50 transition-colors">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-medium text-slate-400">Total Polls Created</span>
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                    <i class="fas fa-chart-bar text-lg"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-extrabold text-white">{{ total_polls }}</div>
+            <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                <i class="fas fa-check-circle text-emerald-400"></i> Multi-choice and structured
+            </p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-colors">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-medium text-slate-400">Active Open Polls</span>
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <i class="fas fa-bolt text-lg"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-extrabold text-emerald-400">{{ active_polls }}</div>
+            <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                <i class="fas fa-circle text-[8px] text-emerald-400 animate-pulse"></i> Ready to collect votes
+            </p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:border-amber-500/50 transition-colors">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-medium text-slate-400">Total Votes Cast</span>
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                    <i class="fas fa-vote-yea text-lg"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-extrabold text-amber-400">{{ total_votes }}</div>
+            <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                <i class="fas fa-shield-alt text-indigo-400"></i> Atomic transaction secured
+            </p>
+        </div>
+    </div>
+
+    <!-- Featured Polls Section -->
+    <div class="mt-16">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Active Featured Polls</h2>
+                <p class="text-sm text-slate-400">Cast your vote on active public discussions</p>
+            </div>
+            <a href="{% url 'polls:list' %}" class="text-sm font-medium text-primary-light hover:text-white transition-colors flex items-center gap-1">
+                View all <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for poll in recent_polls %}
+                <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between hover:border-primary/50 transition-all hover:-translate-y-1 duration-200">
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-3">
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">Active</span>
+                            <span>{{ poll.get_vote_count }} votes</span>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-100 mb-4 line-clamp-2">{{ poll.question }}</h3>
+                        <div class="space-y-2 mb-6">
+                            {% for choice in poll.choice_set.all|slice:":3" %}
+                                <div class="text-xs text-slate-400 flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                                    <span class="truncate">{{ choice.choice_text }}</span>
+                                </div>
+                            {% endfor %}
+                            {% if poll.choice_set.count > 3 %}
+                                <div class="text-xs text-slate-500 italic">+ {{ poll.choice_set.count|add:"-3" }} more options</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 pt-4 border-t border-slate-700/50">
+                        <a href="{% url 'polls:detail' poll.id %}" class="flex-1 text-center py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-semibold transition-colors">
+                            Vote Now
+                        </a>
+                        <a href="{% url 'polls:results' poll.id %}" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors" title="View Results">
+                            <i class="fas fa-chart-pie"></i>
+                        </a>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-span-3 text-center py-12 glass-panel rounded-2xl">
+                    <i class="fas fa-poll text-4xl text-slate-600 mb-3"></i>
+                    <p class="text-slate-300 font-medium">No polls published yet.</p>
+                    <p class="text-slate-500 text-sm mt-1">Be the first to create an engaging poll!</p>
+                    <a href="{% url 'polls:add' %}" class="inline-block mt-4 px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-dark transition-colors">
+                        Create First Poll
+                    </a>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </div>
 {% endblock content %}
-
-{% block custom_css %}
-<style>
-.gradient-bg {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(79, 70, 229, 0.1));
-}
-</style>
-{% endblock custom_css %}

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account | PollMe{% endblock title %}
+
+{% block content %}
+<div class="min-h-[75vh] flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-md glass-panel p-8 sm:p-10 rounded-2xl shadow-2xl border border-dark-border/80">
+        <div class="text-center mb-8">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-user-plus text-xl"></i>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Join PollMe</h2>
+            <p class="text-sm text-slate-400 mt-2">Create an account to publish polls and track analytics</p>
+        </div>
+
+        <form method="POST" action="{% url 'accounts:register' %}" class="space-y-4">
+            {% csrf_token %}
+
+            <div class="space-y-1.5">
+                <label for="id_username" class="block text-sm font-medium text-slate-300">Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <input type="text" name="username" id="id_username" required autofocus
+                           value="{{ form.username.value|default:'' }}"
+                           class="w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:border-primary focus:ring-2 focus:ring-primary/40 transition-colors"
+                           placeholder="Choose username">
+                </div>
+                {% if form.username.errors %}
+                    <p class="text-xs text-red-400">{{ form.username.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="id_email" class="block text-sm font-medium text-slate-300">Email Address</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <input type="email" name="email" id="id_email" required
+                           value="{{ form.email.value|default:'' }}"
+                           class="w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:border-primary focus:ring-2 focus:ring-primary/40 transition-colors"
+                           placeholder="you@example.com">
+                </div>
+                {% if form.email.errors %}
+                    <p class="text-xs text-red-400">{{ form.email.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="id_password" class="block text-sm font-medium text-slate-300">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                        <i class="fas fa-key"></i>
+                    </span>
+                    <input type="password" name="password" id="id_password" required
+                           class="w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:border-primary focus:ring-2 focus:ring-primary/40 transition-colors"
+                           placeholder="At least 6 characters">
+                </div>
+                {% if form.password.errors %}
+                    <p class="text-xs text-red-400">{{ form.password.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="id_confirm_password" class="block text-sm font-medium text-slate-300">Confirm Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                        <i class="fas fa-check-double"></i>
+                    </span>
+                    <input type="password" name="confirm_password" id="id_confirm_password" required
+                           class="w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:border-primary focus:ring-2 focus:ring-primary/40 transition-colors"
+                           placeholder="Re-enter password">
+                </div>
+                {% if form.confirm_password.errors %}
+                    <p class="text-xs text-red-400">{{ form.confirm_password.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3.5 px-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-semibold shadow-lg shadow-primary/25 transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 mt-4">
+                <i class="fas fa-user-check"></i>
+                <span>Create Account</span>
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-800 text-center text-sm text-slate-400">
+            Already registered?
+            <a href="{% url 'accounts:login' %}" class="text-primary-light hover:text-white font-semibold ml-1">
+                Sign in here
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

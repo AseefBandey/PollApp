@@ -1,93 +1,217 @@
 {% extends 'base.html' %}
 
+{% block title %}Results: {{ poll.question }} | PollMe{% endblock title %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 py-8">
-    <div class="bg-dark-card rounded-2xl shadow-xl p-8 border border-gray-800">
-    {% if messages %}
-            <div class="mb-6 space-y-2">
-            {% for message in messages %}
-                    <div class="px-4 py-3 rounded-lg text-sm animate-fade-in
-                    {% if message.tags == 'error' %}
-                            bg-red-900/50 text-red-200 border border-red-800
-                    {% elif message.tags == 'success' %}
-                            bg-green-900/50 text-green-200 border border-green-800
-                    {% else %}
-                            bg-blue-900/50 text-blue-200 border border-blue-800
-                    {% endif %}">
-                    {{ message }}
+<div class="max-w-3xl mx-auto py-8 px-4 animate-slide-up">
+    <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl border border-dark-border/80">
+        <!-- Status & Actions Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 mb-6 pb-4 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+                {% if poll.active %}
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="liveStatusText">Live Results</span>
+                    </span>
+                {% else %}
+                    <span class="px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-400 font-semibold">
+                        Poll Ended
+                    </span>
+                {% endif %}
+                <span>&bull;</span>
+                <span id="totalVotesDisplay" class="font-bold text-slate-200">{{ poll.get_vote_count }}</span> total votes
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Share Button -->
+                <button onclick="copyShareUrl()" id="shareBtn"
+                        class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+                    <i class="fas fa-share-alt"></i>
+                    <span id="shareText">Share</span>
+                </button>
+
+                {% if poll.active and user == poll.owner or poll.active and user.is_staff %}
+                    <a href="{% url 'polls:end_poll' poll.id %}"
+                       onclick="return confirm('Are you sure you want to end this poll? No further votes will be allowed.');"
+                       class="px-3 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-400 rounded-lg text-xs font-medium transition flex items-center gap-1">
+                        <i class="fas fa-stop-circle"></i> End Poll
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Question Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">{{ poll.question }}</h1>
+            {% if user_already_voted %}
+                <p class="text-xs font-semibold text-emerald-400 mt-2 flex items-center justify-center gap-1">
+                    <i class="fas fa-check-circle"></i> You have cast your vote on this poll.
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Visualization Toggle -->
+        <div class="flex items-center justify-center mb-6">
+            <div class="bg-slate-900 p-1 rounded-xl border border-slate-800 flex items-center text-xs">
+                <button id="viewProgressBars" onclick="switchView('bars')" class="px-4 py-1.5 rounded-lg font-semibold bg-primary text-white shadow">
+                    <i class="fas fa-bars mr-1"></i> Percentage Bars
+                </button>
+                <button id="viewChart" onclick="switchView('chart')" class="px-4 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition">
+                    <i class="fas fa-chart-pie mr-1"></i> Interactive Chart
+                </button>
+            </div>
+        </div>
+
+        <!-- View 1: Percentage Progress Bars -->
+        <div id="progressBarsContainer" class="space-y-5 mb-8">
+            {% for choice in poll.get_result_dict %}
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                    <div class="flex justify-between items-center text-sm mb-2">
+                        <span class="font-semibold text-slate-200">{{ choice.text }}</span>
+                        <span class="font-bold text-primary-light">
+                            {{ choice.num_votes }} vote{{ choice.num_votes|pluralize }} &bull; {{ choice.percentage }}%
+                        </span>
+                    </div>
+                    <div class="w-full h-3.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-primary to-indigo-500 rounded-full transition-all duration-700 ease-out"
+                             style="width: {{ choice.percentage }}%">
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
         </div>
-    {% endif %}
 
-    {% if poll %}
-            <div class="text-center mb-8">
-            {% if poll.active %}
-                    <h2 class="text-2xl font-bold text-gray-100">{{ poll.text }}</h2>
-            {% else %}
-                    <h2 class="text-2xl font-bold text-red-400">Poll Ended: {{ poll.text }}</h2>
-            {% endif %}
-                <p class="text-gray-400 mt-2">Total Votes: {{ poll.get_vote_count }}</p>
-        </div>
-
-            <!-- Progress Bars -->
-            <div class="space-y-6 mb-8">
-            {% for choice in poll.get_result_dict %}
-                {% with percentage=choice.percentage|floatformat:0 %}
-                    <div>
-                            <div class="flex justify-between text-sm mb-2">
-                                <span class="font-medium text-gray-200">{{ choice.text }}</span>
-                                <span class="font-medium text-gray-400">{{ choice.percentage|floatformat:1 }}%</span>
-                        </div>
-                            <div class="relative">
-                                <div class="h-4 bg-gray-900 rounded-full">
-                                    <div class="h-4 rounded-full transition-all duration-500 ease-out
-                                {% if choice.alert_class == 'success' %} bg-green-500
-                                {% elif choice.alert_class == 'info' %} bg-blue-500
-                                {% elif choice.alert_class == 'warning' %} bg-yellow-500
-                                {% elif choice.alert_class == 'danger' %} bg-red-500
-                                        {% else %} bg-primary
-                                        {% endif %}"
-                                        style="width: {{ percentage }}%">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                {% endwith %}
-            {% endfor %}
-        </div>
-
-        <!-- Vote Counts -->
-            <div class="space-y-2">
-            {% for choice in poll.choice_set.all %}
-                    <div class="flex justify-between items-center p-4 bg-gray-900 rounded-lg border border-gray-700">
-                        <span class="text-gray-300">{{ choice.choice_text }}</span>
-                        <span class="font-semibold text-primary">{{ choice.get_vote_count }} votes</span>
-                    </div>
-            {% endfor %}
+        <!-- View 2: Chart.js Canvas -->
+        <div id="chartContainer" class="hidden mb-8 p-4 bg-slate-900/60 rounded-xl border border-slate-800">
+            <div class="h-64 sm:h-72 relative">
+                <canvas id="pollResultsChart"></canvas>
             </div>
+        </div>
 
-            <div class="flex justify-center mt-8 gap-4">
-                <a href="{% url 'polls:list' %}" 
-                   class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center">
-                    <i class="fas fa-list mr-2"></i>
-                Back to Polls
+        <!-- Navigation Buttons -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-6 border-t border-slate-800">
+            <a href="{% url 'polls:list' %}"
+               class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center space-x-1.5">
+                <i class="fas fa-arrow-left"></i>
+                <span>Explore More Polls</span>
             </a>
-                {% if poll.active and request.user == poll.owner %}
-                    <a href="{% url 'polls:end_poll' poll.id %}" 
-                       onclick="return confirm('Are you sure you want to end this poll?')"
-                       class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200 flex items-center">
-                        <i class="fas fa-stop-circle mr-2"></i>
-                        End Poll
-                    </a>
-                {% endif %}
+
+            {% if poll.active and not user_already_voted %}
+                <a href="{% url 'polls:detail' poll.id %}"
+                   class="px-6 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs sm:text-sm font-semibold transition shadow-md shadow-primary/20 flex items-center space-x-1.5">
+                    <i class="fas fa-vote-yea"></i>
+                    <span>Vote Now</span>
+                </a>
+            {% endif %}
         </div>
-    {% else %}
-            <div class="text-center text-red-400 py-8">
-                <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
-                <p>No poll found.</p>
-            </div>
-    {% endif %}
     </div>
 </div>
 {% endblock content %}
+
+{% block custom_js %}
+<script>
+    const initialChartData = {{ chart_data_json|safe }};
+    let currentChart = null;
+
+    function renderChart(data) {
+        const ctx = document.getElementById('pollResultsChart');
+        if (!ctx) return;
+
+        const labels = data.map(item => item.text);
+        const votes = data.map(item => item.num_votes);
+        const palette = [
+            '#6366f1', '#10b981', '#f59e0b', '#ec4899', '#38bdf8', '#8b5cf6', '#14b8a6'
+        ];
+
+        if (currentChart) {
+            currentChart.destroy();
+        }
+
+        currentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Votes',
+                    data: votes,
+                    backgroundColor: palette.slice(0, labels.length),
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.parsed.y} votes`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, color: '#94a3b8' },
+                        grid: { color: 'rgba(51, 65, 85, 0.4)' }
+                    },
+                    x: {
+                        ticks: { color: '#cbd5e1' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    function switchView(view) {
+        const barsBtn = document.getElementById('viewProgressBars');
+        const chartBtn = document.getElementById('viewChart');
+        const barsContainer = document.getElementById('progressBarsContainer');
+        const chartContainer = document.getElementById('chartContainer');
+
+        if (view === 'bars') {
+            barsBtn.className = "px-4 py-1.5 rounded-lg font-semibold bg-primary text-white shadow";
+            chartBtn.className = "px-4 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition";
+            barsContainer.classList.remove('hidden');
+            chartContainer.classList.add('hidden');
+        } else {
+            chartBtn.className = "px-4 py-1.5 rounded-lg font-semibold bg-primary text-white shadow";
+            barsBtn.className = "px-4 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition";
+            barsContainer.classList.add('hidden');
+            chartContainer.classList.remove('hidden');
+            if (!currentChart) {
+                renderChart(initialChartData);
+            }
+        }
+    }
+
+    function copyShareUrl() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            const btnText = document.getElementById('shareText');
+            btnText.innerText = "Link Copied!";
+            setTimeout(() => { btnText.innerText = "Share"; }, 2500);
+        });
+    }
+
+    // Auto-poll for live results if poll is active
+    {% if poll.active %}
+    setInterval(() => {
+        fetch("{% url 'polls:results_data' poll.id %}")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('totalVotesDisplay').innerText = data.total_votes;
+                if (currentChart) {
+                    currentChart.data.labels = data.results.map(i => i.text);
+                    currentChart.data.datasets[0].data = data.results.map(i => i.num_votes);
+                    currentChart.update();
+                }
+            })
+            .catch(() => {});
+    }, 5000);
+    {% endif %}
+</script>
+{% endblock custom_js %}

@@ -1,40 +1,48 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poll Me | Modern Polling Platform</title>
+    <title>{% block title %}PollMe | Real-Time Polling & Analytics Platform{% endblock title %}</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        'poppins': ['Poppins', 'sans-serif'],
+                        'sans': ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     colors: {
                         'primary': '#6366f1',
                         'primary-dark': '#4f46e5',
-                        'secondary': '#f59e0b',
+                        'primary-light': '#818cf8',
                         'accent': '#10b981',
-                        'dark-bg': '#111827',
-                        'dark-card': '#1f2937',
+                        'dark-bg': '#0f172a',
+                        'dark-card': '#1e293b',
+                        'dark-border': '#334155',
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                     },
                     keyframes: {
                         fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
+                            '0%': { opacity: '0', transform: 'translateY(6px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
                         slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '0%': { transform: 'translateY(16px)', opacity: '0' },
                             '100%': { transform: 'translateY(0)', opacity: '1' },
                         }
                     }
@@ -44,34 +52,89 @@
     </script>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-        }
-        .glass-effect {
-            background: rgba(31, 41, 55, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
         }
         .gradient-text {
-            background: linear-gradient(135deg, #818cf8, #6366f1);
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 50%, #38bdf8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.6);
         }
     </style>
     {% block custom_css %}{% endblock custom_css %}
 </head>
-<body class="dark bg-dark-bg text-gray-100 min-h-screen flex flex-col font-poppins">
+<body class="bg-dark-bg text-slate-100 min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
 
     {% include 'includes/navbar.html' %}
 
-    <main class="flex-1 max-w-4xl mx-auto p-6 w-full animate-fade-in">
+    <!-- Alert / Toast Messages -->
+    <div class="max-w-4xl mx-auto px-4 w-full mt-4">
+        {% if messages %}
+            <div class="space-y-3">
+                {% for message in messages %}
+                    <div class="flex items-center justify-between p-4 rounded-xl border text-sm font-medium animate-fade-in shadow-lg
+                        {% if message.tags == 'error' %}
+                            bg-red-950/70 text-red-200 border-red-800/80
+                        {% elif message.tags == 'success' %}
+                            bg-emerald-950/70 text-emerald-200 border-emerald-800/80
+                        {% elif message.tags == 'warning' %}
+                            bg-amber-950/70 text-amber-200 border-amber-800/80
+                        {% else %}
+                            bg-indigo-950/70 text-indigo-200 border-indigo-800/80
+                        {% endif %}">
+                        <div class="flex items-center space-x-3">
+                            {% if message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle text-red-400 text-lg"></i>
+                            {% elif message.tags == 'success' %}
+                                <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-triangle-exclamation text-amber-400 text-lg"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle text-indigo-400 text-lg"></i>
+                            {% endif %}
+                            <span>{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-5xl mx-auto p-4 sm:p-6 w-full animate-fade-in">
         {% block content %}{% endblock content %}
     </main>
 
-    <footer class="glass-effect py-4 mt-8">
-        <div class="max-w-4xl mx-auto px-6 text-center text-sm text-gray-400">
-            <p>© 2023 Poll Me. All rights reserved.</p>
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-dark-border/50 py-6 mt-12">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-400">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-chart-pie text-primary text-lg"></i>
+                <span class="font-bold text-slate-200">PollMe</span>
+                <span class="text-xs bg-primary/20 text-primary-light px-2 py-0.5 rounded-full font-mono font-semibold">v2.0 Enterprise</span>
+            </div>
+            <div class="flex items-center space-x-6 text-xs sm:text-sm">
+                <a href="{% url 'polls:list' %}" class="hover:text-white transition-colors">All Polls</a>
+                <a href="{% url 'swagger-ui' %}" class="hover:text-white transition-colors flex items-center gap-1.5 text-primary-light font-medium">
+                    <i class="fas fa-code"></i> REST API Docs
+                </a>
+                <a href="https://github.com" target="_blank" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fab fa-github"></i> Source
+                </a>
+            </div>
+            <p class="text-xs text-slate-500">Production-Ready Django Polling Engine</p>
         </div>
     </footer>
 
+    {% block custom_js %}{% endblock custom_js %}
 </body>
 </html>
